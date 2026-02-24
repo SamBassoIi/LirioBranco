@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lírio Branco - Gestão</title>
+    
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#E6B3BA">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <aside class="sidebar no-print">
+        <div class="sidebar-header">
+            <div class="logo-circle">
+                <img src="logo.png" alt="Lírio" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-seedling" style="display: none; color: white;"></i>
+            </div>
+            <span class="sidebar-title">Lírio Branco</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="window.mudarAba('estoque', this)"><i class="fas fa-box-open"></i> <span class="nav-text">Estoque</span></li>
+            <li class="nav-item" onclick="window.mudarAba('clientes', this)"><i class="fas fa-users"></i> <span class="nav-text">Clientes</span></li>
+            <li class="nav-item" onclick="window.mudarAba('pedidos', this)"><i class="fas fa-shopping-bag"></i> <span class="nav-text">Pedidos</span></li>
+            <li class="nav-item" onclick="window.mudarAba('financeiro', this)"><i class="fas fa-chart-line"></i> <span class="nav-text">Financeiro</span></li>
+            <li class="nav-item special-love" onclick="window.mudarAba('sophia', this)"><i class="fas fa-heart"></i> <span class="nav-text">Para Sophia</span></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <section id="aba-estoque" class="view-section active">
+            <div class="top-bar">
+                <div class="page-title"><h2><i class="fas fa-box-open"></i> Gestão de Estoque</h2><p>Sincronizado</p></div>
+                <div class="actions">
+                    <button class="btn-outline" onclick="window.exportarEstoqueExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-outline" onclick="window.exportarEstoquePDF()"><i class="fas fa-file-pdf"></i> Catálogo PDF</button>
+                    <button class="btn-primary" onclick="window.abrirModalProduto()"><i class="fas fa-plus"></i> Novo Produto</button>
+                </div>
+            </div>
+            <h3 class="section-divider gold"><i class="fas fa-sun"></i> Coleção Dourada</h3><div class="product-grid" id="gridDourados"></div>
+            <h3 class="section-divider silver"><i class="fas fa-moon"></i> Coleção Prata</h3><div class="product-grid" id="gridPratas"></div>
+            <div id="containerOutros" style="display:none;"><h3 class="section-divider other"><i class="fas fa-star"></i> Outros</h3><div class="product-grid" id="gridOutros"></div></div>
+        </section>
+
+        <section id="aba-clientes" class="view-section">
+            <div class="top-bar"><div class="page-title"><h2><i class="fas fa-users"></i> Clientes</h2></div><div class="actions"><button class="btn-primary" onclick="window.abrirModalCliente()"><i class="fas fa-user-plus"></i> Novo Cliente</button></div></div>
+            <div class="card"><table class="table"><thead><tr><th>Nome</th><th>Telefone</th><th>Informações</th><th style="text-align:right">Ações</th></tr></thead><tbody id="tabelaClientes"></tbody></table></div>
+        </section>
+
+        <section id="aba-pedidos" class="view-section">
+            <div class="top-bar"><div class="page-title"><h2><i class="fas fa-shopping-bag"></i> Pedidos</h2></div><div class="actions"><button class="btn-primary" onclick="window.abrirModalPedido()"><i class="fas fa-cart-plus"></i> Criar Pedido</button></div></div>
+            <div class="card"><table class="table"><thead><tr><th>Data</th><th>Cliente</th><th>Qtd Itens</th><th>Total</th><th style="text-align:right">Ações</th></tr></thead><tbody id="tabelaPedidos"></tbody></table></div>
+        </section>
+
+        <section id="aba-financeiro" class="view-section">
+            <div class="top-bar">
+                <div class="page-title"><h2><i class="fas fa-chart-line"></i> Prestação de Contas</h2><p>Visão de Lucros e Despesas</p></div>
+                <div class="actions">
+                    <button class="btn-outline" onclick="window.exportarFinanceiroExcel()"><i class="fas fa-file-excel"></i> Baixar Relatório</button>
+                    <button class="btn-primary" onclick="window.abrirModalDespesa()"><i class="fas fa-minus-circle"></i> Novo Custo</button>
+                </div>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="dash-card success"><h3>Entradas (Vendas)</h3><p id="dashReceitas">R$ 0,00</p></div>
+                <div class="dash-card danger"><h3>Saídas (Custos)</h3><p id="dashDespesas">R$ 0,00</p></div>
+                <div class="dash-card highlight"><h3>Lucro Atual</h3><p id="dashLucro">R$ 0,00</p></div>
+            </div>
+
+            <h3 class="section-divider other"><i class="fas fa-list"></i> Histórico de Custos</h3>
+            <div class="card">
+                <table class="table">
+                    <thead><tr><th>Data</th><th>Descrição do Custo</th><th style="text-align:right">Valor</th><th style="text-align:right">Ações</th></tr></thead>
+                    <tbody id="tabelaDespesas"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="aba-sophia" class="view-section love-section">
+            <div class="falling-petals" id="petalsContainer"></div>
+            <div id="lilyIntro" class="lily-intro"><div class="lily-flower"><div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div><div class="center"></div></div><h1 class="fade-in-text">Para minha Poeta...</h1></div>
+            <div class="love-content fade-in-delayed"><div class="love-header"><h1>Sophia Anjos</h1><p>Onde a poesia encontra a vida.</p></div><div class="love-carousel-frame"><div class="love-carousel"><img src="amor1.jpg" class="love-img active"><img src="amor2.jpg" class="love-img"><img src="amor3.jpg" class="love-img"></div></div><div class="love-mural"><div class="love-card wide"><h3>A Carta da Saudade</h3><p>Soph, eu queria poder te escrever uma carta que definisse a saudade que tenho de você! A saudades que sinto quando você me dá seu último abraço...</p><p>Eu quero compartilhar a todo instante a minha vida com você!</p></div><div class="love-card"><h3>Propósito</h3><p>Você me conquistou com sua pureza, com seu carinho e com suas palavras doces.</p><div class="highlight">EU TE AMO COMO CRISTO AMOU A IGREJA!!!</div></div><div class="love-card poem"><h3>Cativante</h3><p>Cativante te define,<br>como um piquenique cheio de risadas...<br>Obrigado por ser quem você é! ❤️</p></div><div class="love-card list"><h3>Por que eu sou o homem mais sortudo:</h3><ul><li>O dia do cinema dividindo o suco.</li><li>Os melhores cookies do mundo.</li><li>Sua paz e apoio constante.</li></ul></div><div class="love-card highlight-card"><h3>Gratidão</h3><p>Eu não tinha noção que precisava de você como preciso do ar para respirar.</p><p style="font-family:'Dancing Script'; font-size:24px;">Com carinho, seu melhor amigo Sami ❤️</p></div></div></div>
+        </section>
+    </main>
+
+    <div id="modalProduto" class="modal-overlay"><div class="modal-box"><div class="modal-header"><span class="modal-title" id="tituloModalProduto">Produto</span><button class="modal-close" onclick="window.fecharModal('modalProduto')">&times;</button></div><div class="modal-body"><input type="hidden" id="prodId"><label>Nome</label><input type="text" id="prodNome"><div style="margin-bottom:10px;"><label>Material</label><select id="prodMaterial"><option>Dourado</option><option>Prata</option><option>Outros</option></select></div><div style="display:flex; gap:10px;"><div style="flex:1"><label>Cat</label><select id="prodCat"><option>Colar</option><option>Brinco</option><option>Pulseira</option><option>Anel</option></select></div><div style="flex:1"><label>Qtd</label><input type="number" id="prodQtd" value="1"></div><div style="flex:1"><label>Preço</label><input type="number" id="prodPreco" step="0.01"></div></div><label style="margin-top:15px; display:block">Fotos</label><input type="file" id="prodImgInput" accept="image/*" multiple onchange="window.processarImagens(this)"><div id="prodImgPreviewContainer" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div></div><button class="btn-primary" onclick="window.salvarProduto()" style="margin:20px; width:calc(100% - 40px)">Salvar Produto</button></div></div>
+    <div id="modalCliente" class="modal-overlay"><div class="modal-box"><div class="modal-header"><span class="modal-title" id="tituloModalCliente">Cliente</span><button class="modal-close" onclick="window.fecharModal('modalCliente')">&times;</button></div><div class="modal-body"><input type="hidden" id="cliId"><label>Nome</label><input type="text" id="cliNome"><label style="margin-top:10px;">Telefone</label><input type="text" id="cliTel"><label style="margin-top:10px;">Obs</label><textarea id="cliObs" rows="3"></textarea></div><button class="btn-primary" onclick="window.salvarCliente()" style="margin:20px; width:calc(100% - 40px)">Salvar Cliente</button></div></div>
+    <div id="modalPedido" class="modal-overlay"><div class="modal-box" style="width: 700px; max-width:95%;"><div class="modal-header"><span class="modal-title">Novo Pedido</span><button class="modal-close" onclick="window.fecharModal('modalPedido')">&times;</button></div><div class="modal-body" style="display:flex; gap:20px;"><div style="flex:1"><label>Cliente</label><select id="pedCliente" style="margin-bottom:15px;"></select><label>Produto</label><div style="display:flex; gap:5px; margin-bottom:15px;"><select id="pedProduto" style="flex:2"></select><input type="number" id="pedProdQtd" value="1" min="1" style="flex:1"><button class="btn-primary" onclick="window.addProdutoAoPedido()" style="width:auto">+</button></div></div><div style="flex:1; border-left:1px solid #eee; padding-left:20px;"><h4 style="margin-top:0; color:var(--primary); font-family: 'Playfair Display', serif;">Sacola</h4><div id="pedSacola" style="min-height:150px; background:#fffcfd; padding:10px; border-radius:8px; border:1px solid var(--border-color); font-size:13px;">Vazio.</div><div style="margin-top:10px; text-align:right; font-size:18px; font-weight:500; color:var(--primary)">Total: <span id="pedTotalDisp">R$ 0,00</span></div></div></div><button class="btn-primary" onclick="window.finalizarPedido()" style="margin:20px; width:calc(100% - 40px)">Finalizar Venda</button></div></div>
+    <div id="modalDespesa" class="modal-overlay"><div class="modal-box"><div class="modal-header"><span class="modal-title">Registrar Custo</span><button class="modal-close" onclick="window.fecharModal('modalDespesa')">&times;</button></div><div class="modal-body"><label>Descrição (Ex: Fornecedor, Embalagens, Frete)</label><input type="text" id="despDesc" placeholder="No que você investiu?"><label style="margin-top:15px;">Valor Gasto (R$)</label><input type="number" id="despValor" step="0.01" placeholder="0.00"></div><button class="btn-primary" onclick="window.salvarDespesa()" style="margin:20px; width:calc(100% - 40px)">Salvar Custo</button></div></div>
+    <div id="modalRecibo" class="modal-overlay"><div class="modal-box" style="width: 400px; padding: 0; background: transparent; box-shadow: none;"><div id="areaCapturaRecibo" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><div class="modal-header no-print" style="padding: 15px; background: #fff; border-bottom: 1px solid #eee;"><span class="modal-title">Recibo</span><button class="modal-close" onclick="window.fecharModal('modalRecibo')">&times;</button></div><div class="modal-body" style="padding: 0;"><div id="conteudoRecibo" class="receipt-container"></div></div></div><div class="no-print" style="padding: 15px; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;"><button class="btn-outline" onclick="window.baixarImagemRecibo()" style="background: white;"><i class="fas fa-image"></i> Imagem</button><button class="btn-primary" onclick="window.print()"><i class="fas fa-print"></i> PDF</button></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
