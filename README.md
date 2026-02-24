@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 💎 Lírio Branco - Sistema ERP e PDV (Versão Demo)
 
 Sistema completo de gestão comercial desenvolvido para uma loja de acessórios. Esta é uma versão de **Demonstração para Portfólio**, onde os dados são salvos localmente no navegador (LocalStorage) para preservar a integridade do banco de dados real em produção.
